@@ -1,6 +1,6 @@
 if Rails::VERSION::MAJOR >= 3
   RedmineApp::Application.routes.draw do
-    match 'issues/my_new', :controller => 'issues', :action => 'my_new', :via => [:get, :post], :as => 'my_new_issue'
+    match 'issues/relatd/my_new', :controller => 'my_issues', :action => 'my_new', :via => [:get, :post], :as => 'my_new_issue'
 
   # resources :projects, :only => [:my_new] do
   #   resources :issues, :only => [:my_new] do

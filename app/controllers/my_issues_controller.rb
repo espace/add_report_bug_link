@@ -1,5 +1,13 @@
-class IssuesController < ApplicationController
-  before_filter :get_project,:only=>[:my_new]
+class MyIssuesController < ApplicationController
+
+  before_filter :get_project, :only => [:my_new]
+  #before_filter :authorize, :only => [:my_new]
+  #before_filter :check_for_default_issue_status, :only => [:my_new]
+  before_filter :build_new_issue_from_params, :only => [:my_new]
+ 
+  #helper :watchers
+  #include WatchersHelper
+
    def my_new
     @issue = Issue.new
     @issue.defaults_from(params[:related_to]) if params[:related_to] && params[:do_copy]
@@ -19,7 +27,7 @@ class IssuesController < ApplicationController
     unless default_status
       render_error l(:error_no_default_issue_status)
       return
-    end    
+    end
     @issue.status = default_status
     @allowed_statuses = ([default_status] + default_status.find_new_statuses_allowed_to(User.current.roles_for_project(@project), @issue.tracker)).uniq
     @priorities = IssuePriority.all
@@ -48,4 +56,38 @@ class IssuesController < ApplicationController
     render_404
   end
   
+  def build_new_issue_from_params
+    if params[:id].blank?
+      @issue = Issue.new
+      if params[:copy_from]
+        begin
+          @copy_from = Issue.visible.find(params[:copy_from])
+          @copy_attachments = params[:copy_attachments].present? || request.get?
+          @copy_subtasks = params[:copy_subtasks].present? || request.get?
+          @issue.copy_from(@copy_from, :attachments => @copy_attachments, :subtasks => @copy_subtasks)
+        rescue ActiveRecord::RecordNotFound
+          render_404
+          return
+        end
+      end
+      @issue.project = @project
+    else
+      @issue = @project.issues.visible.find(params[:id])
+    end
+
+    @issue.project = @project
+    @issue.author = User.current
+    # Tracker must be set before custom field values
+    @issue.tracker ||= @project.trackers.find((params[:issue] && params[:issue][:tracker_id]) || params[:tracker_id] || :first)
+    if @issue.tracker.nil?
+      render_error l(:error_no_tracker_in_project)
+      return false
+    end
+    @issue.start_date ||= Date.today if Setting.default_issue_start_date_to_creation_date?
+    @issue.safe_attributes = params[:issue]
+
+    @priorities = IssuePriority.active
+    @allowed_statuses = @issue.new_statuses_allowed_to(User.current, true)
+    @available_watchers = (@issue.project.users.sort + @issue.watcher_users).uniq
+  end
 end
