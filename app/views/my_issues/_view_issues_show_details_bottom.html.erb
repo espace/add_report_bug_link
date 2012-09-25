@@ -1,4 +1,4 @@
-<% if User.current.allowed_to?({:controller =>"my_issues" , :action => "my_new"}, @issue.project, :global =>false)%>
+<% if User.current.allowed_to?({:controller =>"issues" , :action => "new"}, @issue.project, :global =>false)%>
   <tr><th colspan=3></th><td align="right">
     <%= link_to "Report a bug", my_new_issue_path(:project_id => @issue.project.identifier, :related_to => @issue.id, :do_copy => true),:style=>"background-color:rgb(240,240,240)" %></td></tr>
 <%end%>
