@@ -27,7 +27,7 @@ Redmine::Plugin.register :add_report_bug_link do
   name 'Add Report Bug Link'
   author 'Basayel Said'
   description 'As a team member, can click on a "Open an Issue on this Story" link in the side bar of any story.'
-  version '0.0.1'
+  version '1.0.0'
 end
 
 #fix required to make the plugin work in devel mode with rails 2.2
