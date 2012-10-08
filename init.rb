@@ -26,7 +26,7 @@ end
 Redmine::Plugin.register :add_report_bug_link do
   name 'Add Report Bug Link'
   author 'Basayel Said'
-  description 'As a team member, can click on a "Open an Issue on this Story" link in the side bar of any story.'
+  description 'As a team member with add issue permission, can click on a "Report a bug" link in show issue page to create a new related issue with bug tracker.'
   version '1.0.0'
 end
 
