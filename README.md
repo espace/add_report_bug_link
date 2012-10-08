@@ -12,7 +12,7 @@ Compatible with redmine 2.1 and Rails 3.
   ```
     cd redmine-2.1.0
     cd plugins/
-    git clone git://github.com/espace/add_issue_text_id.git
+    git clone git://github.com/espace/add_report_bug_link.git
   ```
 
 ##Credits
